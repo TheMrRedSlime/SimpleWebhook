@@ -7,5 +7,3 @@ commands
 pip3 install requests
 python3 wbtroll.py
 ```
-
-<script>console.log("willthiswork?")</script>
