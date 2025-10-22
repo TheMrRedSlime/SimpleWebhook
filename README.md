@@ -4,6 +4,6 @@ requires python 3.x & requests
 
 commands
 ```
-pip3 install requests
+pip install aiohttp
 python3 wbtroll.py
 ```
