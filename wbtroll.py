@@ -1,5 +1,5 @@
 import asyncio
-
+from concurrent.futures import ThreadPoolExecutor   
 import aiohttp
 
 
@@ -18,21 +18,33 @@ async def snap_discord_webhook(webhooker_url):
 
 async def send_discord_webhook(webhook_url, message):
     data = {"content": message}
+
+    async def send_message():
+        async with session.post(url=webhook_url, data=data) as response:
+            if response.status == 204:
+                print("Message sent!")
+            elif response.status == 404:
+                print("Webhook not found!")
+            elif response.status == 429:
+                print("You are currently being ratelimited! Try again later")
+            else:
+                print(f"Failed to send message. Status code: {response.status}")
     async with aiohttp.ClientSession() as session:
         while True:
-            async with session.post(url=webhook_url, data=data) as response:
-                if response.status == 204:
-                    print("Message sent!")
-                elif response.status == 404:
-                    print("Webhook not found!")
-                elif response.status == 429:
-                    print("You are currently being ratelimited! Try again later")
-                else:
-                    print(f"Failed to send message. Status code: {response.status}")
-
+            tasks = [
+                await send_message()
+                for i in range(10)
+            ]
+            results = await asyncio.gather(*tasks)
 
 async def main():
     while True:
+        print('''
+▗▖  ▗▖ ▗▄▖ ▗▄▄▄  ▗▄▄▄▖    ▗▄▄▖▗▖  ▗▖    ▗▄▄▖ ▗▄▄▄▖▗▄▄▄   ▗▄▄▖▗▖   ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖
+▐▛▚▞▜▌▐▌ ▐▌▐▌  █ ▐▌       ▐▌ ▐▌▝▚▞▘     ▐▌ ▐▌▐▌   ▐▌  █ ▐▌   ▐▌     █  ▐▛▚▞▜▌▐▌   
+▐▌  ▐▌▐▛▀▜▌▐▌  █ ▐▛▀▀▘    ▐▛▀▚▖ ▐▌      ▐▛▀▚▖▐▛▀▀▘▐▌  █  ▝▀▚▖▐▌     █  ▐▌  ▐▌▐▛▀▀▘
+▐▌  ▐▌▐▌ ▐▌▐▙▄▄▀ ▐▙▄▄▖    ▐▙▄▞▘ ▐▌      ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀ ▗▄▄▞▘▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖                                                                                                               
+        ''')
         print("\nDiscord Webhook Trollinator v0.1")
         print("\nMade By TheMrRedSlime!")
         print("\nMenu:")
