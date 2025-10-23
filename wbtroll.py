@@ -1,5 +1,5 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor   
+
 import aiohttp
 
 
@@ -18,24 +18,18 @@ async def snap_discord_webhook(webhooker_url):
 
 async def send_discord_webhook(webhook_url, message):
     data = {"content": message}
-
-    async def send_message():
-        async with session.post(url=webhook_url, data=data) as response:
-            if response.status == 204:
-                print("Message sent!")
-            elif response.status == 404:
-                print("Webhook not found!")
-            elif response.status == 429:
-                print("You are currently being ratelimited! Try again later")
-            else:
-                print(f"Failed to send message. Status code: {response.status}")
     async with aiohttp.ClientSession() as session:
         while True:
-            tasks = [
-                await send_message()
-                for i in range(10)
-            ]
-            results = await asyncio.gather(*tasks)
+            async with session.post(url=webhook_url, data=data) as response:
+                if response.status == 204:
+                    print("Message sent!")
+                elif response.status == 404:
+                    print("Webhook not found!")
+                elif response.status == 429:
+                    print("You are currently being ratelimited! Try again later")
+                else:
+                    print(f"Failed to send message. Status code: {response.status}")
+
 
 async def main():
     while True:
@@ -43,7 +37,8 @@ async def main():
 ▗▖  ▗▖ ▗▄▖ ▗▄▄▄  ▗▄▄▄▖    ▗▄▄▖▗▖  ▗▖    ▗▄▄▖ ▗▄▄▄▖▗▄▄▄   ▗▄▄▖▗▖   ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖
 ▐▛▚▞▜▌▐▌ ▐▌▐▌  █ ▐▌       ▐▌ ▐▌▝▚▞▘     ▐▌ ▐▌▐▌   ▐▌  █ ▐▌   ▐▌     █  ▐▛▚▞▜▌▐▌   
 ▐▌  ▐▌▐▛▀▜▌▐▌  █ ▐▛▀▀▘    ▐▛▀▚▖ ▐▌      ▐▛▀▚▖▐▛▀▀▘▐▌  █  ▝▀▚▖▐▌     █  ▐▌  ▐▌▐▛▀▀▘
-▐▌  ▐▌▐▌ ▐▌▐▙▄▄▀ ▐▙▄▄▖    ▐▙▄▞▘ ▐▌      ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀ ▗▄▄▞▘▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖                                                                                                               
+▐▌  ▐▌▐▌ ▐▌▐▙▄▄▀ ▐▙▄▄▖    ▐▙▄▞▘ ▐▌      ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀ ▗▄▄▞▘▐▙▄▄▖▗▄█▄▖▐▌  ▐▌▐▙▄▄▖
+                                                                                  
         ''')
         print("\nDiscord Webhook Trollinator v0.1")
         print("\nMade By TheMrRedSlime!")
@@ -80,3 +75,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Webhook Troller Exiting")
         print("Thank you for using Webhook Troller v0.1")
+
