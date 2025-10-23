@@ -1,6 +1,6 @@
 # SimpleWebhook
 A Simple Webhook Spammer i use against idiotic scammers :)
-requires python 3.x & requests
+requires python 3.x & aiohttp
 
 commands
 ```
